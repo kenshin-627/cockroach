@@ -1,0 +1,268 @@
+%フォーマット更新日：20210603
+
+\documentclass[a4paper,10pt,twocolumn]{jsarticle}
+
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{multirow}
+\usepackage{url}
+\usepackage{otf}
+\usepackage{comment}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{bm}
+\usepackage{amsmath}
+
+
+
+\newcommand{\hama}{\ajMayuHama}
+
+
+\pagestyle{empty}
+
+\setlength{\topmargin}{6mm}
+\setlength{\oddsidemargin}{-4mm}
+\setlength{\evensidemargin}{-4mm}
+\setlength{\textwidth}{175mm}
+\setlength{\headsep}{0pt}
+\setlength{\headheight}{0pt}
+\setlength{\textheight}{235mm}
+\setlength{\columnsep}{5mm}
+
+\begin{document}
+
+\twocolumn[%
+\vspace{-20mm}
+\begin{center}
+{\LARGE\textbf{重回帰分析によるゴキブリ発生リスクの推定}}
+\end{center}
+
+\begin{flushright}
+\begin{tabular}{|c|l|}
+%\hline
+%版数  &   001
+%\\
+\hline
+日付  &  2021年09月15日
+\\
+\hline
+名前  &  藤田憲伸
+\\
+\hline
+\end{tabular}
+\end{flushright}
+]
+
+
+%--------------
+%本文開始
+%--------------
+
+\section{自由研究の背景}
+夏休み中に勤続4年のバイト先で初めてゴキブリに遭遇し、真剣にバイトを辞めるか悩んだことで自分はとても虫が嫌いだということを再認識した。
+
+本自由研究では、重回帰分析を用いて都道府県毎のゴキブリ発生リスクの学習を行い、世界の主要な都市のゴキブリ発生リスクを推定することで将来の勤務地候補を考える。
+
+ゴキブリ発生リスクとは、ゴキブリ駆除業界で最大級のWebサイトであるゴキブリ駆除マイスター\cite{cockroach}での相談件数を都道府県別世帯数で割り、平均0分散1に標準化したものとする。
+
+\section{自由研究内容}
+本自由研究ではPythonの機械学習ライブラリのscikit-learnを用いて重回帰分析を行う。
+説明変数には各都道府県の、人口(人)、面積(km^2)、\mathrm{1km^2}あたりのごみ排出量(\mathrm{t/km^2})、年平均気温(℃)、年平均湿度(\%)を、目的変数には各都道府県のゴキブリ発生リスクを用いて学習を行う。作成した線形モデルを用いて、アメリカ(ワシントン\mathrm{D.C.})、ロシア(モスクワ)、ドイツ(ベルリン)、韓国(ソウル)、オーストラリア(キャンベラ)、の5つの都市についてゴキブリ発生リスクを推定する。
+
+また、作成した線形モデルの標準偏回帰係数からそれぞれの説明変数が目的変数に与える影響について考察する。
+
+\section{数値例}
+\subsection{実験条件}
+表\ref{table:data}に実験に用いたデータセットの詳細を示す。
+\begin{table}[h]
+ \caption{実験に用いたデータセットの詳細}
+ \label{table:data}
+ \centering
+  \begin{tabular}{ll}
+   \hline
+	 \hline
+	 引用元Webサイト & 項目 \\
+   \hline \hline
+	 総務省統計局国勢調査\cite{soumu} & 都道府県人口 \\
+	 & 都道府県世帯数 \\
+	 \hline
+	 環境省\cite{kankyo} & 都道府県ごみ排出量 \\
+	 \hline
+	 国土交通省国土地理院\cite{kokudokoutukokudotiri} & 都道府県面積 \\
+	 \hline
+	 国土交通省気象庁\cite{kokudokoutukisyou} & 都道府県年平均気温 \\
+	 & 都道府県年平均湿度 \\
+	 & 外国年平均気温 \\
+	 \hline
+   ゴキブリ駆除マイスター\cite{cockroach} & 都道府県ゴキブリ相談件数 \\
+	 \hline
+	 アメリカ合衆国国勢調査局\cite{usa} & ワシントンD.C.人口 \\
+	 & モスクワ人口 \\
+	 & 外国面積 \\
+	 \hline
+	 ユーロスタット\cite{euro} & ベルリン人口 \\
+	 \hline
+	 国際連合\cite{un} & ソウル人口 \\
+	 & キャンベラ人口 \\
+	 \hline
+	 経済協力開発機構\cite{oecd} & 外国ごみ排出量 \\
+	 \hline
+	 Weatherbase\cite{weather} & 外国年平均湿度 \\
+	 \hline
+   \hline
+  \end{tabular}
+\end{table}
+
+\subsection{実行結果}
+scikit-learnのLinearRegressionを用いて作成したモデルで、世界の主要な都市のゴキブリ発生リスクを推定した結果を表\ref{table:result}に示す。また、日本の都道府県のゴキブリ発生リスク上位と下位それぞれ2都道府県を表\ref{table:japan}に示す。
+\begin{table}[h]
+ \caption{推定した世界の主要な都市のゴキブリ発生リスク}
+ \label{table:result}
+ \centering
+  \begin{tabular}{lr}
+   \hline
+	 \hline
+	 都市 & ゴキブリ発生リスク \\
+   \hline \hline
+	 ワシントンD.C. & -0.33929 \\
+	 モスクワ & 1.74012 \\
+	 ベルリン & 0.12651 \\
+	 ソウル & 1.60007 \\
+	 キャンベラ & -0.40518 \\
+	 \hline
+   \hline
+  \end{tabular}
+\end{table}
+\begin{table}[h]
+ \caption{ゴキブリ発生リスク上位下位2都道府県}
+ \label{table:japan}
+ \centering
+  \begin{tabular}{lr}
+   \hline
+	 \hline
+	 都道府県 & ゴキブリ発生リスク \\
+   \hline \hline
+	 東京都 & 4.46522 \\
+	 大阪府 & 2.27283 \\
+	 長野県 & -0.68619 \\
+	 北海道 & -0.76841 \\
+	 \hline
+   \hline
+  \end{tabular}
+\end{table}
+
+世界の主要な都市の説明変数を表\ref{table:expl}に示す。また、作成した線形モデルの標準偏回帰係数を表\ref{table:coef}に示す。
+\begin{table}[h]
+ \caption{世界の主要な都市の説明変数}
+ \label{table:expl}
+ \centering
+  \begin{tabular}{lrr}
+   \hline
+	 \hline
+	 都市 & 人口(万人) & 面積(km^2) \\
+   \hline \hline
+	 ワシントンD.C & 64.75 & 177.0 \\
+	 モスクワ & 1192.00 & 2511.0 \\
+	 ベルリン & 347.00 & 891.8 \\
+	 ソウル & 986.00 & 605.2 \\
+	 キャンベラ & 39.58 & 814.2 \\
+	 \hline
+   \hline
+	 都市 & ごみ排出量(t/km^2) & 年平均気温(℃) \\
+	 \hline
+	 \hline
+	 ワシントンD.C & 23.29 & 13.14 \\
+	 モスクワ & 4.71 & -9.35 \\
+	 ベルリン & 139.37 & 9.97 \\
+	 ソウル & 179.31 & 13.58 \\
+	 キャンベラ & 1.75 & 13.55 \\
+	 \hline
+	 \hline
+	 都市 & 年平均湿度(\%) \\
+	 \hline
+	 \hline
+	 ワシントンD.C & 68.1 \\
+	 モスクワ & 80.8 \\
+	 ベルリン & 75.5 \\
+	 ソウル & 69.0 \\
+	 キャンベラ & 67.5 \\
+	 \hline
+	 \hline
+  \end{tabular}
+\end{table}
+\begin{table}[h]
+ \caption{作成したモデルの標準偏回帰係数}
+ \label{table:coef}
+ \centering
+  \begin{tabular}{cr}
+   \hline
+	 \hline
+	 説明変数 & 標準偏回帰係数 \\
+   \hline \hline
+	 人口 & 0.53857 \\
+	 面積 & -0.20174 \\
+	 ごみ排出量 & 0.32184 \\
+	 年平均気温 & -0.02312 \\
+	 年平均湿度 & -0.11016 \\
+	 \hline
+   \hline
+  \end{tabular}
+\end{table}
+\subsection{考察}
+表\ref{table:result}の全ての都市のゴキブリ発生リスクが表\ref{table:japan}の大阪府と比較して低いことから現在住んでいる大阪よりはゴキブリが少ないと推測できる。しかし本来ゴキブリは熱帯雨林を中心に高温多湿な環境を好むため、表\ref{table:expl}のモスクワの年間平均気温からするとゴキブリは生息していない、または生息数が少ないはずでありゴキブリ発生リスク1.74012という数字は高すぎると考えられる。表\ref{table:coef}の年平均気温の標準偏回帰係数が他に比べて極端に低いことから、今回作成したモデルにおいて、年平均気温がゴキブリ発生リスクに与える影響が低くなってしまっていることがわかる。これは、学習にゴキブリが全国的に分布している日本の都道府県しか使用していないためだと考えられる。
+今回、ゴキブリの生息数に関するデータが日本国内のものしか見つけることができなかったが、もし外国のデータがあれば、学習に世界のさまざまな気候のデータを使用することで、更に正確な推定ができるだろう。
+
+\begin{thebibliography}{99}
+\bibitem{cockroach}
+	ゴキブリ駆除マイスター,
+	都道府県別ゴキブリ発生リスク＜図解＞2015年版,
+	\url{https://t-meister.jp/gokiburi/lab/highrisk-area2015.html},
+	(Accessed: 2021-9-15)
+\bibitem{soumu}
+	総務省統計局国勢調査,
+	第2章 人口・世帯,
+	\url{https://www.stat.go.jp/data/nihon/02.html},
+	(Accessed: 2021-9-15)
+\bibitem{kankyo}
+	環境省,
+	廃棄物処理技術情報,
+	\url{http://www.env.go.jp/recycle/waste_tech/ippan/h27/index.html},
+	(Accessed: 2021-9-15)
+\bibitem{kokudokoutukokudotiri}
+	国土交通省国土地理院,
+	全国都道府県市区町村別面積調,
+	\url{https://www.gsi.go.jp/KOKUJYOHO/MENCHO-title.htm},
+	(Accessed: 2021-9-15)
+\bibitem{kokudokoutukisyou}
+	国土交通省気象庁,
+	\url{https://www.jma.go.jp/jma/index.html},
+	(Accessed: 2021-9-15)
+\bibitem{usa}
+	United States Census Bureau,
+	\url{https://www.census.gov/en.html},
+	(Accessed: 2021-9-15)
+\bibitem{euro}
+	Eurostat,
+	\url{https://ec.europa.eu/eurostat},
+	(Accessed: 2021-9-15)
+\bibitem{un}
+	United Nations,
+	Statistics Division,
+	\url{https://unstats.un.org/unsd/demographic-social/products/dyb/},
+	(Accessed: 2021-9-15)
+\bibitem{oecd}
+	OECD,
+	OECD Data,
+	\url{https://data.oecd.org/waste/municipal-waste.htm},
+	(Accessed: 2021-9-15)
+\bibitem{weather}
+	Weatherbase,
+	\url{https://www.weatherbase.com/weather/countryall.php3},
+	(Accessed: 2021-9-15)
+
+\end{thebibliography}
+
+
+%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%
+\end{document}
